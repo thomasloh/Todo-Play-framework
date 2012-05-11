@@ -1,4 +1,14 @@
-This is your new Play 2.0 application
+TODO
 =====================================
 
-This file will be packaged with your application, when using `play dist`.
+Basic Todo app, with CRD feature (no Update yet)
+
+Twilio integrated (only to specific phone number)
+
+Storage is on H2
+
+
+Issue
+=====
+Due date has to be after 4 hours from now( for some unknown reason on prod, no issue on dev)
+No update functionality yet
