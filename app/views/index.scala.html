@@ -1,0 +1,145 @@
+@(tasks: List[Task], taskForm: Form[Task], phoneError: Boolean, dateError: Boolean)
+
+@import helper._
+
+<!-- Navbar -->
+@navbar = {
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="/">Todo</a>
+				<ul class="nav">
+					<li class="">
+						<!-- <a href="./index.html">Overview</a> -->
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+}
+
+<!-- Content -->
+@content = {
+	
+	<div class="container">
+		
+		<div class="well">
+			
+		    <h2>You have @tasks.size() todos</h2>
+
+			<table class="table">
+				<tbody>
+					
+					<tr>
+						<td>
+							@form(routes.Application.newTask()) {
+								@inputText(taskForm("label"), 'class -> "input-large", '_label -> "", '_help -> "", 'placeholder -> "Todo", 'autocomplete -> "false")
+								
+								
+								@input(taskForm("dueDate"), '_label -> "", '_help -> "") { (id, name, value, args) =>
+									<div class="input-append date" id="dp" data-date="" data-date-format="mm-dd-yyyy">
+									  <input class="span2" size="16" name="@name" id="@id" type="text" placeholder="Due" value="@value" @toHtmlArgs(args)>
+									  <span class="add-on"><i class="icon-th"></i></span>
+									</div>
+								}
+
+								@input(taskForm("dueTime"), '_label -> "", '_help -> "") { (id, name, value, args) =>
+									  <input class="span2 dropdown-timepicker" data-provide="timepicker" name="@name"  id="@id" type="text" value="@value" @toHtmlArgs(args)>
+									@if(dateError) {
+										<span class="help inline"> Must be a later date</span>
+									}
+								}
+
+								@input(taskForm("phone"), '_label -> "", '_help -> "", 'placeholder -> "Phone #") { (id, name, value, args) =>
+								    <input type="text" name="@name" id="@id" value="@value" @toHtmlArgs(args)>
+									@if(phoneError) {
+										<span class="help inline"> Must be 10 digits (including area code)</span>
+									}
+								}
+						</td>
+						<td class="create">
+							<input type="submit" value="Create" class="btn btn-primary">
+						</td>
+							}
+					</tr>
+					
+					@for(task <- tasks) {
+						<tr>
+							<td>
+								<!-- <a href="#@task.label" data-toggle="modal"><strong>@task.label</strong></a> -->
+								<a href="#@{task.label.replace(" ", "")}" data-toggle="modal"><strong>@task.label</strong></a>
+								
+								<div class="modal hide" id="@{task.label.replace(" ", "")}">
+									
+									@form(routes.Application.updateTask()) {
+										
+										<div class="modal-header">
+											<h2>
+												Todo
+											</h2>
+										</div>
+										<div class="modal-body">
+											
+											<!-- Label of todo -->
+											@input(taskForm("label"), '_label -> "", '_help -> "") { (id, name, value, args) =>
+											  <label for="@id">Todo</label>
+											  <input class="span2" size="16" name="@name" id="@id" disabled="true" type="text" value="@task.label" @toHtmlArgs(args)>
+											}
+
+											<!-- Due date of todo -->
+											@input(taskForm("dueDate"), '_label -> "", '_help -> "") { (id, name, value, args) =>
+												<div class="input-append date" id="dp" data-date="" data-date-format="mm-dd-yyyy">
+													<label for="@id">Due</label>
+												  <input class="span2" size="16" name="@name" id="@id" disabled="true" type="text" value="@task.dueDate" @toHtmlArgs(args)>
+												  <!-- <span class="add-on"><i class="icon-th"></i></span> -->
+												</div>
+											}
+
+											<!-- Due time of todo -->
+											@input(taskForm("dueTime"), '_label -> "", '_help -> "") { (id, name, value, args) =>
+												  <input class="span2 dropdown-timepicker" data-provide="timepicker" disabled="true"  name="@name"  id="@id" type="text" value="@task.dueTime" @toHtmlArgs(args)>
+												@if(dateError) {
+													<span class="help inline"> Must be a later date</span>
+												}
+											}
+
+											<!-- Phone # of user -->
+											@input(taskForm("phone"), '_label -> "", '_help -> "", 'placeholder -> "Phone #") { (id, name, value, args) =>
+												<label for="@id">Phone</label>
+											    <input type="text" name="@name" id="@id" disabled="true" value="@task.phone" @toHtmlArgs(args)>
+												@if(phoneError) {
+													<span class="help inline"> Must be 10 digits (including area code)</span>
+												}
+											}
+											
+										</div>
+										<!-- <div class="modal-footer">
+											<input type="submit" value="Update" class="btn btn-primary">
+										</div> -->
+										
+									}
+									
+									
+								</div>
+								
+							</td>
+							<td>
+								@form(routes.Application.deleteTask(task.id)) {
+									<input type="submit" value="Delete" class="btn btn-danger">
+				                }
+							</td>
+						</tr>
+					}
+					
+				</tbody>
+			</table>
+				
+
+		</div>
+	
+	</div>
+	
+}
+
+<!-- Main -->
+@main("Todo")(navbar)(content)
